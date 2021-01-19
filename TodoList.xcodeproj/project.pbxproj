@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		D4170E3C25B67A4100582E62 /* UserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4170E3B25B67A4100582E62 /* UserData.swift */; };
+		D4170E4125B6899900582E62 /* EditingPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4170E4025B6899900582E62 /* EditingPage.swift */; };
 		D482089625B56FAE00A7DFA0 /* TodoListApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D482089525B56FAE00A7DFA0 /* TodoListApp.swift */; };
 		D482089825B56FAE00A7DFA0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D482089725B56FAE00A7DFA0 /* ContentView.swift */; };
 		D482089A25B56FB000A7DFA0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D482089925B56FB000A7DFA0 /* Assets.xcassets */; };
@@ -35,6 +36,7 @@
 
 /* Begin PBXFileReference section */
 		D4170E3B25B67A4100582E62 /* UserData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserData.swift; sourceTree = "<group>"; };
+		D4170E4025B6899900582E62 /* EditingPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditingPage.swift; sourceTree = "<group>"; };
 		D482089225B56FAE00A7DFA0 /* TodoList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TodoList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D482089525B56FAE00A7DFA0 /* TodoListApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoListApp.swift; sourceTree = "<group>"; };
 		D482089725B56FAE00A7DFA0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -103,6 +105,7 @@
 				D482089E25B56FB000A7DFA0 /* Info.plist */,
 				D482089B25B56FB000A7DFA0 /* Preview Content */,
 				D4170E3B25B67A4100582E62 /* UserData.swift */,
+				D4170E4025B6899900582E62 /* EditingPage.swift */,
 			);
 			path = TodoList;
 			sourceTree = "<group>";
@@ -263,6 +266,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D4170E3C25B67A4100582E62 /* UserData.swift in Sources */,
+				D4170E4125B6899900582E62 /* EditingPage.swift in Sources */,
 				D482089825B56FAE00A7DFA0 /* ContentView.swift in Sources */,
 				D482089625B56FAE00A7DFA0 /* TodoListApp.swift in Sources */,
 			);

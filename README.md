@@ -1,1 +1,1 @@
-# 'TodoList'
+# SwiftUI demo project
