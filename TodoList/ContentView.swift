@@ -13,7 +13,8 @@ func initUserData() -> [SingleToDo] {
         let data = try! decoder.decode([SingleToDo].self, from: dataStored)
         for item in data {
             if !item.deleted{
-                output.append(SingleToDo(title: item.title, dueDate: item.dueDate, isChecked: item.isChecked, id: item.id))
+                output.append(SingleToDo(title: item.title, dueDate: item.dueDate, isChecked: item.isChecked,
+                                         isFavorite: item.isFavorite, id: item.id))
             }
         }
     }
@@ -27,6 +28,7 @@ struct ContentView: View {
     @State var showEditingPage: Bool = false
     @State var selection: [Int] = []
     @State var editingMode: Bool = false
+    @State var showFavoriteOnly: Bool = false
     
     var body: some View {
         ZStack{
@@ -34,13 +36,15 @@ struct ContentView: View {
                 ScrollView(.vertical,showsIndicators: true){
                     VStack {
                         ForEach(self.userData.todoList){item in
-                            if !item.deleted{
+                            if !item.deleted {
+                                if !self.showFavoriteOnly || item.isFavorite {
                                 SingleCardView(index: item.id, editingMode: self.$editingMode, selection: self.$selection)
                                     .environmentObject(self.userData)
                                     .padding(.horizontal)
                                     .padding(.top)
                                     .animation(.spring())
                                     .transition(.slide)
+                                }
                             }
                         }
                     }.padding(.horizontal)
@@ -48,8 +52,12 @@ struct ContentView: View {
                 .navigationTitle("提醒事项")
                 .navigationBarItems(trailing: HStack(spacing: 20) {
                     if self.editingMode {
-                        DeleteButton(selection: self.$selection)
+                        DeleteButton(selection: self.$selection, editingMode: self.$editingMode)
                             .environmentObject(self.userData)
+                        LikeButton(selection: self.$selection, editingMode: self.$editingMode)
+                            .environmentObject(self.userData)
+                    } else {
+                        ShowFavoriteOnly(showFavoriteOnly: self.$showFavoriteOnly)
                     }
                     EditingButton(editingMode: self.$editingMode, selection: self.$selection)
                 })
@@ -77,12 +85,14 @@ struct DeleteButton: View{
     
     @Binding var selection: [Int]
     @EnvironmentObject var userData: ToDo
+    @Binding var editingMode: Bool
     
     var body: some View {
         Button(action: {
             for i in selection {
                 userData.delete(id: i)
             }
+            self.editingMode = false
         }){
             Image(systemName: "trash")
                 .imageScale(.large)
@@ -90,7 +100,18 @@ struct DeleteButton: View{
     }
 }
 
-struct EditingButton:View {
+struct ShowFavoriteOnly: View {
+    @Binding var showFavoriteOnly: Bool
+    var body: some View{
+        Image(systemName: self.showFavoriteOnly ? "star.fill": "star").imageScale(.large)
+            .foregroundColor(.yellow)
+            .onTapGesture {
+                self.showFavoriteOnly.toggle()
+            }
+    }
+}
+
+struct EditingButton: View {
     @Binding var editingMode: Bool
     @Binding var selection: [Int]
     var body: some View{
@@ -100,6 +121,22 @@ struct EditingButton:View {
         }){
             Image(systemName: "gear").imageScale(.large)
         }
+    }
+}
+
+struct LikeButton: View {
+    @EnvironmentObject var userData: ToDo
+    @Binding var selection: [Int]
+    @Binding var editingMode: Bool
+    
+    var body: some View{
+        Image(systemName: "star.lefthalf.fill").imageScale(.large).foregroundColor(.yellow)
+            .onTapGesture {
+                for i in self.selection {
+                    self.userData.todoList[i].isFavorite.toggle()
+                }
+                self.editingMode = false
+            }
     }
 }
 
@@ -113,11 +150,12 @@ struct SingleCardView: View {
     
     var body: some View {
         HStack {
-            Rectangle().frame(width: 6).foregroundColor(.blue)
+            Rectangle().frame(width: 6).foregroundColor(Color("Color" + String(self.index % 4)))
             //删除按钮
             if editingMode {
                 Button(action: {
                     self.userData.delete(id: self.index)
+                    self.editingMode = false
                 }){
                     Image(systemName: "trash").imageScale(.large).padding(.leading)
                 }
@@ -143,11 +181,16 @@ struct SingleCardView: View {
             .sheet(isPresented: self.$showEditingPage, content: {
                 EditingPage(title: self.userData.todoList[index].title,
                             dueDate: self.userData.todoList[index].dueDate,
+                            isFavorite: self.userData.todoList[index].isFavorite,
                             id: self.index)
                     .environmentObject(self.userData)
             })
             
             //右边按钮
+            if self.userData.todoList[index].isFavorite {
+                Image(systemName: "star.fill")
+                    .imageScale(.large).foregroundColor(.yellow)
+            }
             if !editingMode {
                 Image(systemName: self.userData.todoList[index].isChecked ? "checkmark.square.fill": "square").imageScale(.large).padding(.trailing)
                     .onTapGesture {
@@ -174,6 +217,6 @@ struct SingleCardView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(userData: ToDo(data: [SingleToDo(title: "写作业"), SingleToDo(title: "复习")]))
+        ContentView(userData: ToDo(data: [SingleToDo(title: "写作业", isFavorite: false), SingleToDo(title: "复习" , isFavorite: true)]))
     }
 }

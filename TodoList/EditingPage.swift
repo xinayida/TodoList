@@ -13,6 +13,7 @@ struct EditingPage: View {
     
     @State var title: String = ""
     @State var dueDate: Date = Date()
+    @State var isFavorite: Bool = false
     var id: Int? = nil
     
     @Environment(\.presentationMode) var presentation
@@ -23,12 +24,19 @@ struct EditingPage: View {
                     TextField("事项内容", text: $title)
                     DatePicker(selection: self.$dueDate, label: { Text("截止时间")})
                 }
+                
+                Section{
+                    Toggle(isOn: self.$isFavorite, label: {
+                        Text("收藏")
+                    })
+                }
+                
                 Section{
                     Button(action: {
                         if(id == nil){
-                             self.UserData.add(data: SingleToDo(title: self.title, dueDate: self.dueDate))
+                            self.UserData.add(data: SingleToDo(title: self.title, dueDate: self.dueDate, isFavorite: self.isFavorite))
                         } else {
-                            self.UserData.edit(id: self.id!, data: SingleToDo(title: self.title, dueDate: self.dueDate))
+                            self.UserData.edit(id: self.id!, data: SingleToDo(title: self.title, dueDate: self.dueDate, isFavorite: self.isFavorite))
                         }
                         
                         self.presentation.wrappedValue.dismiss()

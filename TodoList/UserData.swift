@@ -21,7 +21,7 @@ class ToDo: ObservableObject {
     init(data: [SingleToDo]) {
         self.todoList = []
         for item in data{
-            self.todoList.append(SingleToDo(title: item.title, dueDate: item.dueDate, isChecked: item.isChecked, id: self.count))
+            self.todoList.append(SingleToDo(title: item.title, dueDate: item.dueDate, isChecked: item.isChecked, isFavorite: item.isFavorite, id: self.count))
            count += 1
         }
     }
@@ -32,7 +32,7 @@ class ToDo: ObservableObject {
     }
     
     func add(data: SingleToDo) {
-        todoList.append(SingleToDo(title: data.title, dueDate: data.dueDate, id: self.count))
+        todoList.append(SingleToDo(title: data.title, dueDate: data.dueDate, isFavorite: data.isFavorite, id: self.count))
         self.count += 1
         self.sort()
         self.dataStore()
@@ -42,14 +42,15 @@ class ToDo: ObservableObject {
         self.todoList[id].dueDate = data.dueDate
         self.todoList[id].title = data.title
         self.todoList[id].isChecked = false
+        self.todoList[id].isFavorite = data.isFavorite
         self.sort()
         self.dataStore()
     }
     
     func sort(){
         self.todoList.sort(by: {(data1, data2) in
-//            return data1.dueDate.timeIntervalSince1970 < data2.dueDate.timeIntervalSince1970
-            return data1.dueDate.distance(to: data2.dueDate) < 0
+            return data1.dueDate.timeIntervalSince1970 < data2.dueDate.timeIntervalSince1970
+//            return data1.dueDate.distance(to: data2.dueDate) > 0
         })
         
         for i in 0 ..< self.todoList.count{
@@ -77,6 +78,6 @@ struct SingleToDo: Identifiable , Codable{
     var dueDate: Date = Date()
     var isChecked: Bool = false
     var deleted: Bool = false
-    
+    var isFavorite: Bool = false
     var id: Int = 0
 }
