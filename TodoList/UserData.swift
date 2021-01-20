@@ -6,9 +6,12 @@
 //
 
 import Foundation
+import UserNotifications
 
 var encoder = JSONEncoder()
 var decoder = JSONDecoder()
+
+let notificationContent = UNMutableNotificationContent()
 
 class ToDo: ObservableObject {
     @Published var todoList: [SingleToDo]
@@ -26,6 +29,23 @@ class ToDo: ObservableObject {
         }
     }
     
+    func showNotification(id: Int){
+        notificationContent.title = self.todoList[id].title
+        notificationContent.sound = UNNotificationSound.default
+        
+        let triger = UNTimeIntervalNotificationTrigger(timeInterval: self.todoList[id].dueDate.timeIntervalSinceNow, repeats: false)
+        let request = UNNotificationRequest(identifier: self.todoList[id].title + self.todoList[id].dueDate.description, content: notificationContent, trigger: triger)
+        print("sendRequest \(request.content)")
+        UNUserNotificationCenter.current().add(request)
+    }
+    
+    func withdrawNotification(id: Int) {
+//        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+        let identifier = self.todoList[id].title + self.todoList[id].dueDate.description
+        UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: [identifier])
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [identifier])
+    }
+    
     func check(id: Int) {
         self.todoList[id].isChecked.toggle()
         self.dataStore()
@@ -36,15 +56,19 @@ class ToDo: ObservableObject {
         self.count += 1
         self.sort()
         self.dataStore()
+        
+        showNotification(id: todoList.count - 1)
     }
     
     func edit(id: Int, data: SingleToDo) {
+        withdrawNotification(id: id)
         self.todoList[id].dueDate = data.dueDate
         self.todoList[id].title = data.title
         self.todoList[id].isChecked = false
         self.todoList[id].isFavorite = data.isFavorite
         self.sort()
         self.dataStore()
+        showNotification(id: id)
     }
     
     func sort(){
@@ -59,6 +83,7 @@ class ToDo: ObservableObject {
     }
     
     func delete(id: Int) {
+        withdrawNotification(id: id)
         self.todoList[id].deleted = true
 //        self.ToDoList.remove(at: id)
 //        for i in id ..< self.ToDoList.count{
